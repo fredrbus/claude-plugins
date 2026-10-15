@@ -1,0 +1,17 @@
+{
+  "name": "fredrbus",
+  "description": "Fredriks skills og plugins for Claude Code.",
+  "owner": { "name": "Fredrik Busklein" },
+  "plugins": [
+    {
+      "name": "fredrbus",
+      "source": "./plugins/fredrbus",
+      "description": "Fredriks personlige skills: orwell-writing."
+    },
+    {
+      "name": "skins",
+      "source": { "source": "github", "repo": "hellosverre/claude-skins" },
+      "description": "Skins for Claude Code av hellosverre: tool-rader med ikoner, diff-, tabell- og Mermaid-kort og femten temaer. /skin bytter live."
+    }
+  ]
+}
