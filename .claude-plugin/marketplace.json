@@ -12,6 +12,11 @@
       "name": "skins",
       "source": { "source": "github", "repo": "hellosverre/claude-skins" },
       "description": "Skins for Claude Code av hellosverre: tool-rader med ikoner, diff-, tabell- og Mermaid-kort og femten temaer. /skin bytter live."
+    },
+    {
+      "name": "gh-status",
+      "source": "./plugins/gh-status",
+      "description": "Sidepanel med status på åpne PR-er og bygg på GitHub. Oppdateres hvert minutt; /gh-status åpner panelet."
     }
   ]
 }

@@ -1,0 +1,7 @@
+{
+  "name": "gh-status",
+  "version": "0.1.0",
+  "description": "Sidepanel med status på åpne PR-er og bygg på GitHub.",
+  "author": { "name": "Fredrik Busklein" },
+  "types": "./types/index.d.ts"
+}
