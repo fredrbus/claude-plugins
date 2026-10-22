@@ -2,15 +2,15 @@ import { expect, test } from 'claude-code/testing'
 
 import { age, parsePrs, parseRuns, rollup } from './github'
 
-const pr = (number: number, branch: string, state = 'OPEN', checks: unknown[] = []) => ({
+const pr = (number: number, branch: string, state = 'OPEN', isDraft = false) => ({
   number,
   title: `PR ${number}`,
   headRefName: branch,
   state,
-  isDraft: false,
+  isDraft,
   reviewDecision: '',
   url: `https://github.com/o/r/pull/${number}`,
-  statusCheckRollup: checks,
+  statusCheckRollup: [],
 })
 
 const run = (id: number, workflow: string, branch: string, status = 'completed', conclusion = 'success') => ({
@@ -32,12 +32,18 @@ test('a failed check fails the rollup, a running one holds it', () => {
   expect(rollup([])).toBe('none')
 })
 
-test('the current branch PR comes first, even when merged', () => {
+test('the current branch PR comes first', () => {
   const open = JSON.stringify([pr(2, 'other'), pr(3, 'feature')])
-  const merged = JSON.stringify(pr(1, 'mine', 'MERGED'))
-  const prs = parsePrs(open, merged, 'mine')
+  const prs = parsePrs(open, JSON.stringify(pr(1, 'mine')), 'mine')
   expect(prs.map(p => p.number)).toEqual([1, 2, 3])
   expect(prs[0]?.isCurrent).toBe(true)
+})
+
+test('drafts and merged or closed PRs are left out', () => {
+  const open = JSON.stringify([pr(2, 'other'), pr(3, 'feature', 'OPEN', true)])
+  expect(parsePrs(open, JSON.stringify(pr(1, 'mine', 'MERGED')), 'mine').map(p => p.number)).toEqual([2])
+  expect(parsePrs(open, JSON.stringify(pr(1, 'mine', 'CLOSED')), 'mine').map(p => p.number)).toEqual([2])
+  expect(parsePrs(open, JSON.stringify(pr(1, 'mine', 'OPEN', true)), 'mine').map(p => p.number)).toEqual([2])
 })
 
 test('the current branch PR is not listed twice', () => {

@@ -30,7 +30,7 @@ async function refresh($: EngineInterface): Promise<void> {
     const git = await $.process.run(['git', 'branch', '--show-current'])
     const branch = git.stdout.trim()
     const [openJson, currentJson, runsJson] = await Promise.all([
-      gh($, ['pr', 'list', '--state', 'open', '--limit', '20', '--json', PR_FIELDS]),
+      gh($, ['pr', 'list', '--state', 'open', '--search', 'draft:false', '--limit', '20', '--json', PR_FIELDS]),
       branch ? gh($, ['pr', 'view', branch, '--json', PR_FIELDS]).catch(() => undefined) : undefined,
       gh($, ['run', 'list', '--limit', '40', '--json', RUN_FIELDS]),
     ])
@@ -94,8 +94,6 @@ export const register: Register = on => {
               {'  '}
               {pr.isCurrent ? '★ ' : ''}
               {pr.branch}
-              {pr.isDraft ? ' · draft' : ''}
-              {pr.state !== 'OPEN' ? ` · ${pr.state.toLowerCase()}` : ''}
               {pr.review ? ` · ${pr.review.toLowerCase().replace('_', ' ')}` : ''}
             </Text>
           </Box>

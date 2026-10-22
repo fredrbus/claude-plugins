@@ -66,12 +66,14 @@ function toPr(raw: RawPr, branch: string): Pr {
   }
 }
 
-// Open pull requests, plus the current branch's even when it is merged or closed.
-// The current branch's comes first.
+// Open pull requests that are ready for review, the current branch's included.
+// Drafts and merged or closed pull requests are left out. The current branch's comes first.
 export function parsePrs(openJson: string, currentJson: string | undefined, branch: string): Pr[] {
   const open = (JSON.parse(openJson) as RawPr[]).map(raw => toPr(raw, branch))
   const current = currentJson ? toPr(JSON.parse(currentJson) as RawPr, branch) : undefined
-  const all = current && !open.some(pr => pr.number === current.number) ? [current, ...open] : open
+  const all = (current && !open.some(pr => pr.number === current.number) ? [current, ...open] : open).filter(
+    pr => pr.state === 'OPEN' && !pr.isDraft,
+  )
   return [...all.filter(pr => pr.isCurrent), ...all.filter(pr => !pr.isCurrent)]
 }
 
